@@ -1,0 +1,81 @@
+
+
+
+
+Private Sub btn_ChayDi_Click()
+
+    Dim FiletoOpen As Variant
+    Dim demA As Integer
+    Dim i As Integer
+    Dim Name_file_now As String
+    
+    ' =========== get file name now ========
+    Name_file_now = ThisWorkbook.Name
+    
+    ' =========== Enter File Excel to ======
+    FiletoOpen = Application.GetOpenFilename(MultiSelect:=True) ' Luu du lieu nhung file excel nap vao
+    demA = UBound(FiletoOpen) ' Lay so luong file nap
+    
+    
+    ' ======= 1. Vong for cho lap chay nhieu doi tuong ======
+    Dim FileImport As Workbook
+    Dim name_file_import_i As String
+        
+    ' ======= 2. Copy sheet AIB test vao sheet hien hanh ======
+    For i = 1 To demA
+        Workbooks.Open FiletoOpen(i)
+        Set FileImport = ActiveWorkbook
+        name_file_import_i = FileImport.Name
+        'MsgBox (name_file_import_i)
+        Sheets("AIB test").Copy before:=Workbooks(Name_file_now).Sheets(1)
+        FileImport.Close False
+        Workbooks(Name_file_now).Activate
+        Sheets(1).Name = name_file_import_i
+    Next i
+    
+    
+    ' ========== 3. Copy du lieu "AIB test" sang sheet_AIB Test Summary =======
+    Dim dong_cuoi As Integer
+    Dim sheet_AIB As Worksheet
+    Workbooks(Name_file_now).Activate
+    Set sheet_AIB = Worksheets.Add
+    sheet_AIB.Name = "AIB Test Summary"
+    For i = 2 To demA + 1
+        Sheets(i).Select
+        Range(Cells(1, 11), Cells(157, 12)).Copy Destination:=sheet_AIB.Cells(1, 2 * i)
+    Next i
+    For i = 2 To demA + 1
+        Sheets(2).Delete
+    Next i
+    
+       ' ======= 4. Copy sheet "Isolation" vao sheet hien hanh ======
+    
+        For i = 1 To demA
+        Workbooks.Open FiletoOpen(i)
+        Set FileImport = ActiveWorkbook
+        name_file_import_i = FileImport.Name
+        'MsgBox (name_file_import_i)
+        Sheets("Isolation").Copy before:=Workbooks(Name_file_now).Sheets(1)
+        FileImport.Close False
+        Workbooks(Name_file_now).Activate
+        Sheets(1).Name = name_file_import_i
+    Next i
+    
+    
+        ' ========== 6. Copy du lieu "AIB test" sang sheet_Isolation Summary =======
+    Dim sheet_Isolation As Worksheet
+    Workbooks(Name_file_now).Activate
+    Set sheet_Isolation = Worksheets.Add
+    sheet_Isolation.Name = "Isolation Summary"
+    For i = 2 To demA + 1
+        Sheets(i).Select
+        Range(Cells(1, 10), Cells(46, 12)).Copy Destination:=sheet_Isolation.Cells(1, 2 * i)
+    Next i
+    For i = 2 To demA + 1
+        Sheets(2).Delete
+    Next i
+
+    Unload Me
+    
+
+End Sub
